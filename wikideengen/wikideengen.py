@@ -43,7 +43,7 @@ class FullText:
         return self._list_unique_words()
 
 
-class TranslatedWords():
+class TranslatedWords:
     def __init__(self, llist):
         self.words = llist
 
@@ -78,8 +78,7 @@ def custom_correct_translation_order(cls, result, word):
         )
 
 
-
-class WikiScraper:
+class WikiScrapper:
     @classmethod
     def download_page(cls, title="Wikipedia", lang='de'):
         # get all text from page
@@ -120,7 +119,24 @@ class WikiScraper:
         return t_words
 
     @classmethod
-    def generate_csv(cls, title, file_name, separator=';', row_id=False, col_id=False, translations=5):
-        s_words = cls.scrape(title, translations)
+    def scrape_local(cls, in_filename, translations=5):
+        with open(in_filename, 'r', encoding='utf-8') as file:
+            file_text = file.read()
+        words = FullText("local_file", file_text)
+        u_words = words.unique_words
+        t_words = cls.translate_list(u_words, translations)
+        return t_words
+
+
+    @classmethod
+    def generate_csv(cls, title="sample", file_name='sometext.txt', separator=';', row_id=False, col_id=False, translations=5, src='wiki'):
+        if src.lower() == 'wiki':
+            s_words = cls.scrape(title, translations)
+        elif src.lower() == 'local':
+            s_words = cls.scrape_local(title, translations)
+        else:
+            print("set src param : wiki or local ")
+            raise ValueError
         df_words = s_words.converted2df
         df_words.to_csv(file_name, sep=separator, encoding='utf-8', index=row_id, header=col_id)
+
