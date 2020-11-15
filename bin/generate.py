@@ -31,8 +31,6 @@ if __name__ == "__main__":
     tno = 1
     src = 'wiki'
 
-    print(sys.argv)
-
     for cmd in sys.argv:
         print(cmd)
         if cmd_str[0] in cmd:

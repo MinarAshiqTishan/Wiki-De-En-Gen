@@ -10,3 +10,9 @@ Generate  German word list from Wiki with English meaning as a CSV
 - translate the words with dictcc API
 - generate csv with pandas
     -- delimiter:  ';' 
+    
+### Installation
+----------------------------------------------------------
+- if downloaded to a local folder, run pip :
+        
+        pip install ./folder_name_of_Wiki-De-En-Gen
