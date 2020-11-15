@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from dictcc import Dict
+from dictcc import Dict,Result
 import pandas as pd
 import wikipediaapi
+from string import punctuation
 
 """
     Generate  German word list from Wiki with meaning as a CSV
@@ -28,6 +29,7 @@ class FullText:
 
         text_updated = " ".join(self.text.split("\n"))
         raw_word_list = text_updated.split(" ")
+        raw_word_list = [x.strip(punctuation) for x in raw_word_list]
 
         for word in raw_word_list:
             if len(word) > 1:
@@ -61,6 +63,22 @@ class TranslatedWords():
             return pd.DataFrame()
 
 
+# monkey patching :D
+@classmethod
+def custom_correct_translation_order(cls, result, word):
+    if not result.translation_tuples:
+        return result
+
+    [from_words, to_words] = zip(*result.translation_tuples)
+
+    return Result(
+            from_lang=result.to_lang,
+            to_lang=result.from_lang,
+            translation_tuples=zip(to_words, from_words),
+        )
+
+
+
 class WikiScraper:
     @classmethod
     def download_page(cls, title="Wikipedia", lang='de'):
@@ -75,7 +93,8 @@ class WikiScraper:
         return FullText(title, text)
 
     @classmethod
-    def translate_list(cls, word_list):
+    def translate_list(cls, word_list, translations=5):
+        Dict._correct_translation_order = custom_correct_translation_order
         # translate
         translator = Dict()
         translation_list = list()
@@ -85,7 +104,7 @@ class WikiScraper:
 
         for word in word_list:
             result = translator.translate(word, from_language='de', to_language='en')
-            for tup in result.translation_tuples[:2]:
+            for tup in result.translation_tuples[:translations]:
                 translation_list.append(list(tup))
 
             word_count -= 1
@@ -94,14 +113,14 @@ class WikiScraper:
         return TranslatedWords(translation_list)
 
     @classmethod
-    def scrape(cls, title):
+    def scrape(cls, title, translations=5):
         words = cls.download_page(title)
         u_words = words.unique_words
-        t_words = cls.translate_list(u_words)
+        t_words = cls.translate_list(u_words, translations)
         return t_words
 
     @classmethod
-    def generate_csv(cls, title, file_name):
-        s_words = cls.scrape(title)
+    def generate_csv(cls, title, file_name, separator=';', row_id=False, col_id=False, translations=5):
+        s_words = cls.scrape(title, translations)
         df_words = s_words.converted2df
-        df_words.to_csv(file_name, sep=';', encoding='utf-8', index=False, header=False)
+        df_words.to_csv(file_name, sep=separator, encoding='utf-8', index=row_id, header=col_id)
