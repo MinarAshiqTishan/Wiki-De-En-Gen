@@ -26,7 +26,9 @@ sample call:
 
           python.exe generate.py --i=Apfel --o=Apfel.csv --d=; --n=1 --s=wiki
       
-
+or from dist:
+          
+          generate.exe --i=Apfel --o=Apfel.csv --d=; --n=1 --s=wiki
 
 ### Installation
 ----------------------------------------------------------
