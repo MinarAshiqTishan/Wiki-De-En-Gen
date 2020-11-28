@@ -20,7 +20,7 @@ Give the following arguments to generate.py. Put no space after parameter.
 -    --o=outfile filename e.g. somecsv.csv
 -    --d=delimiter character e.g. ;
 -    --n=no of translations e.g. 1\n',
--    --s=source of de wiki or local file
+-    --s=source of de 'wiki' or 'local' file
 
 sample call: 
 
