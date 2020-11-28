@@ -20,7 +20,7 @@ if __name__ == "__main__":
               '\t--d= delimiter character e.g. ;\n',
               '\t--n= no of translations e.g. 1\n',
               '\t--s= source of de wiki or local\n',
-              'cmd sample with default values: \n',
+              'Running with default values: \n',
               '\t python.exe generate.py --i=Apfel --o= Apfel.csv --d=; --n=1 --s=wiki\n')
         print("Running with default values...")
 
